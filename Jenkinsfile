@@ -2,15 +2,14 @@ pipeline {
     agent any
 
     stages {
-
         stage('Setup Environment') {
             steps {
                 sh '''
-                python -m venv venv
+                python3 -m venv venv
                 . venv/bin/activate
                 pip install --upgrade pip
                 pip install -r requirements.txt
-                playwright install --with-deps
+                playwright install
                 '''
             }
         }
@@ -19,6 +18,7 @@ pipeline {
             steps {
                 sh '''
                 . venv/bin/activate
+                mkdir -p reports
                 pytest --html=reports/report.html --self-contained-html
                 '''
             }
@@ -28,7 +28,7 @@ pipeline {
     post {
         always {
             publishHTML([
-                allowMissing: false,
+                allowMissing: true,
                 alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'reports',

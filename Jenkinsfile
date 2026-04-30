@@ -16,11 +16,27 @@ pipeline {
 
         stage('Run Tests') {
             steps {
-                sh '''
-                . venv/bin/activate
-                mkdir -p reports
-                pytest --html=reports/report.html --self-contained-html
-                '''
+                script {
+                    sh 'mkdir -p reports'
+
+                    def testStatus = sh(
+                        script: '''
+                        . venv/bin/activate
+                        pytest \
+                          --html=reports/report.html \
+                          --self-contained-html \
+                          --screenshot=only-on-failure \
+                          --video=retain-on-failure \
+                          --tracing=retain-on-failure
+                        ''',
+                        returnStatus: true
+                    )
+
+                    if (testStatus != 0) {
+                        currentBuild.result = 'UNSTABLE'
+                        echo 'Tests failed — screenshots, videos, and traces collected.'
+                    }
+                }
             }
         }
     }
@@ -29,12 +45,13 @@ pipeline {
         always {
             publishHTML([
                 allowMissing: true,
-                alwaysLinkToLastBuild: true,
                 keepAll: true,
                 reportDir: 'reports',
                 reportFiles: 'report.html',
                 reportName: 'Playwright Automation Report'
             ])
+
+            archiveArtifacts artifacts: 'test-results/**', fingerprint: true
         }
     }
 }

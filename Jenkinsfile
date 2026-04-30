@@ -2,11 +2,6 @@ pipeline {
     agent any
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/your-org/playwright-python-ci.git'
-            }
-        }
 
         stage('Setup Environment') {
             steps {

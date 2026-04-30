@@ -13,7 +13,7 @@ def test_verify_google_title(page: Page):
     """
     page.goto("https://www.google.com")
     page.wait_for_load_state(state="domcontentloaded")
-    assert "Google_1" in page.title()
+    assert "Google" in page.title()
 
 
 @pytest.mark.smoke

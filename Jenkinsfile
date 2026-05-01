@@ -42,17 +42,20 @@ pipeline {
     }
 
     post {
-        always {
-            publishHTML([
-                allowMissing: true,
-                alwaysLinkToLastBuild: true,   // ✅ REQUIRED
-                keepAll: true,
-                reportDir: 'reports',
-                reportFiles: 'report.html',
-                reportName: 'Playwright Automation Report'
-            ])
+    always {
+        publishHTML([
+            allowMissing: true,
+            alwaysLinkToLastBuild: true,
+            keepAll: true,
+            reportDir: 'reports',
+            reportFiles: 'report.html',
+            reportName: 'Playwright Automation Report'
+        ])
 
-            archiveArtifacts artifacts: 'test-results/**', fingerprint: true
-        }
+        archiveArtifacts(
+            artifacts: 'test-results/**',
+            allowEmptyArchive: true,
+            fingerprint: true
+        )
     }
 }

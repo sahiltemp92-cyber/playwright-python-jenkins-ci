@@ -34,7 +34,7 @@ pipeline {
 
                     if (testStatus != 0) {
                         currentBuild.result = 'UNSTABLE'
-                        echo 'Tests failed — screenshots, videos, and traces collected.'
+                        echo 'Some tests failed. Continuing pipeline and publishing reports.'
                     }
                 }
             }
@@ -45,6 +45,7 @@ pipeline {
         always {
             publishHTML([
                 allowMissing: true,
+                alwaysLinkToLastBuild: true,   // ✅ REQUIRED
                 keepAll: true,
                 reportDir: 'reports',
                 reportFiles: 'report.html',
